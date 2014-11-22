@@ -1,0 +1,60 @@
+library("dplyr")
+library("tidyr")
+
+  #create a file in the working directory called 'data'
+if (!file.exists("data")) {
+  dir.create("data")
+}
+setwd("./data")
+
+  #download the zip file
+download.file("https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip", destfile="./UCI HAR Dataset.zip")
+unzip("./UCI HAR Dataset.zip")
+
+  #read the training data set that identifies the subject who tool part in the experiment and labels this vector "Participant"
+subjectTrain<- read.table("./UCI HAR Dataset/train/subject_train.txt")
+colnames(subjectTrain)<- "Participant"
+
+  #read the training data set that contains all the reading from the 561 various measurements
+subjectTrainX<- read.table("./UCI HAR Dataset/train/X_train.txt")
+  # read the 561 measurement labels and set these as the column headers for the 'subjectTrainX' data set
+features<- read.table("./UCI HAR Dataset/features.txt")
+colnames(subjectTrainX)<- features$V2
+
+  #read the data that idicates which activity the participant was taking (i.e. WALKING, WALKING_UPSTAIRS, WALKING_DOWNSTAIRS,SITTING,STANDING, LAYING)
+subjectTrainY<- read.table("./UCI HAR Dataset/train/y_train.txt")
+colnames(subjectTrainY)<- "Activity"
+
+  # merge the two vectors that contain the participant number and activity undertaken, along with the data frame of the 561 differing measurements
+trainingdata<- cbind(subjectTrain, subjectTrainY, subjectTrainX)
+
+  # do exactly the same as above for the data sets set up for the 'Test' data, and merge these to for the data frame, 'testdata'.
+subjectTest<- read.table("./UCI HAR Dataset/test/subject_test.txt")
+colnames(subjectTest)<- "Participant"
+    subjectTestX<- read.table("./UCI HAR Dataset/test/X_test.txt")
+    colnames(subjectTestX)<- features$V2
+        subjectTestY<- read.table("./UCI HAR Dataset/test/y_test.txt")
+        colnames(subjectTestY)<- "Activity"
+testdata<- cbind(subjectTest, subjectTestY, subjectTestX)
+
+  #merge both the training data set and the test data set
+combined<- rbind(trainingdata, testdata)
+
+  #replace the activity number with the corresponding activity label
+acnames<- list('1'='Walking', '2'='Walking_Upstair', '3'='Walking_Downstairs', '4'='Sitting', '5'='Standing', '6'='Laying')
+map<- as.factor(as.character(acnames[combined$Activity]))
+combined$Activity<- map
+
+  #convert the combined data frame to class tbl_df 
+combined<- tbl_df(combined)
+
+  #convert the 'combined' data set from wide format to long format so that 561 measurement variables become on variable labelled, 'features'
+  #group the data set the measurement features, then the type of activity, and then by the participant
+  #summarize the results to obtain the average(mean) of each variable(features) for each activity and each participant
+meanAll<- gather(combined, features, measurement, -Participant, -Activity)%>% group_by(features,Activity, Participant)%>% summarize(mean_measures=mean(measurement))
+
+  #filter the summarized data to contain only variables that contain the mean measurement readings
+tidydata<- meanAll[grep('mean', meanAll$features), ]
+
+  #print the results
+tidydata
