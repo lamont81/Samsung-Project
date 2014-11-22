@@ -11,7 +11,7 @@ setwd("./data")
 download.file("https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip", destfile="./UCI HAR Dataset.zip")
 unzip("./UCI HAR Dataset.zip")
 
-  #read the training data set that identifies the subject who tool part in the experiment and labels this vector "Participant"
+  #read the training data set that identifies the subject who took part in the experiment and label this vector "Participant"
 subjectTrain<- read.table("./UCI HAR Dataset/train/subject_train.txt")
 colnames(subjectTrain)<- "Participant"
 
@@ -28,7 +28,7 @@ colnames(subjectTrainY)<- "Activity"
   # merge the two vectors that contain the participant number and activity undertaken, along with the data frame of the 561 differing measurements
 trainingdata<- cbind(subjectTrain, subjectTrainY, subjectTrainX)
 
-  # do exactly the same as above for the data sets set up for the 'Test' data, and merge these to for the data frame, 'testdata'.
+  # do exactly the same as above for the data sets set up for the 'Test' data, and merge these to form the data frame, 'testdata'.
 subjectTest<- read.table("./UCI HAR Dataset/test/subject_test.txt")
 colnames(subjectTest)<- "Participant"
     subjectTestX<- read.table("./UCI HAR Dataset/test/X_test.txt")
@@ -48,8 +48,8 @@ combined$Activity<- map
   #convert the combined data frame to class tbl_df 
 combined<- tbl_df(combined)
 
-  #convert the 'combined' data set from wide format to long format so that 561 measurement variables become on variable labelled, 'features'
-  #group the data set the measurement features, then the type of activity, and then by the participant
+  #convert the 'combined' data set from wide format to long format so that 561 measurement variables become one variable labelled, 'features'
+  #group the data set by the measurement features, then the type of activity, and then by the participant
   #summarize the results to obtain the average(mean) of each variable(features) for each activity and each participant
 meanAll<- gather(combined, features, measurement, -Participant, -Activity)%>% group_by(features,Activity, Participant)%>% summarize(mean_measures=mean(measurement))
 
