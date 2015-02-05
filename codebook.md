@@ -28,11 +28,13 @@ kurtosis(): kurtosis of the frequency domain signal
 bandsEnergy(): Energy of a frequency interval within the 64 bins of the FFT of each window.
 angle(): Angle between to vectors.
 
-- 'features.txt': List of all features.
+**- 'features.txt': List of all features.**
+
+Explains all the features in more details
 
 **- 'activity_labels.txt': Links the class labels with their activity name. These are as follows:**
 
-WALKING, WALKING_UPSTAIRS, WALKING_DOWNSTAIRS, SITTING, STANDING, LAYING
+WALKING, WALKING UPSTAIRS, WALKING DOWNSTAIRS, SITTING, STANDING, LAYING
 
 **- 'train/X_train.txt': Training set**
 
