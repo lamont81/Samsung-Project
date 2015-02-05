@@ -1,7 +1,7 @@
 library("dplyr")
 library("tidyr")
 
-  #create a file in the working directory called 'data'
+  **#create a file in the working directory called 'data'**
 if (!file.exists("data")) {
   dir.create("data")
 }
